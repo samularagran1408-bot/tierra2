@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Henagito Reciclón 🌍</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap');
+:root{--verde:#2ecc40;--verde-osc:#1a7a28;--menta:#a8e6a3;--azul:#3498db;--amarillo:#FFD700;--rojo:#e74c3c;--fondo:#061209;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito',sans-serif;background:var(--fondo);min-height:100vh;overflow-x:hidden;color:#fff;user-select:none;}
+
+/* ===== INICIO ===== */
+#p-inicio{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse at center,#0d4a1e 0%,#061209 100%);position:relative;overflow:hidden;padding:20px;}
+.stars{position:absolute;inset:0;pointer-events:none;}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 2s infinite alternate;}
+@keyframes twinkle{0%{opacity:.15;transform:scale(1);}100%{opacity:1;transform:scale(1.4);}}
+.planeta{font-size:88px;animation:spin 10s linear infinite;margin-bottom:8px;display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.titulo{font-family:'Baloo 2',cursive;font-size:clamp(1.7em,5vw,2.8em);font-weight:800;text-align:center;
+  background:linear-gradient(135deg,#2ecc40,#FFD700,#2ecc40);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:4px;animation:glow 3s ease-in-out infinite;}
+@keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.4);}}
+.sub{font-size:.98em;color:var(--menta);text-align:center;margin-bottom:10px;}
+.ficha{background:rgba(255,255,255,.07);border:1.5px solid rgba(46,204,64,.3);border-radius:18px;
+  padding:15px 22px;max-width:480px;width:100%;text-align:center;backdrop-filter:blur(6px);margin-bottom:10px;}
+.ficha-nom{font-family:'Baloo 2',cursive;font-size:1.12em;font-weight:800;color:var(--amarillo);margin-bottom:3px;}
+.ficha-lema{font-size:.86em;color:var(--menta);font-style:italic;margin-bottom:7px;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;}
+.tag{background:rgba(46,204,64,.18);border:1px solid rgba(46,204,64,.4);border-radius:20px;padding:2px 10px;font-size:.74em;color:var(--menta);font-weight:700;}
+.hena-idle{width:96px;margin:7px auto;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.btn{font-family:'Baloo 2',cursive;font-size:1.25em;font-weight:800;padding:12px 42px;
+  background:linear-gradient(135deg,#2ecc40,#1a9c30);color:#fff;border:none;border-radius:50px;cursor:pointer;
+  box-shadow:0 6px 28px rgba(46,204,64,.4);transition:all .2s;letter-spacing:1px;text-transform:uppercase;}
+.btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 10px 38px rgba(46,204,64,.6);}
+.autoria{font-size:.68em;color:rgba(255,255,255,.32);margin-top:10px;text-align:center;}
+.autoria strong{color:rgba(46,204,64,.55);}
+
+/* ===== HIMNO ===== */
+#p-himno{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse,#0a2e1a,#050e08);padding:24px;}
+.himno-card{background:rgba(255,255,255,.06);border:1.5px solid rgba(46,204,64,.3);border-radius:20px;padding:24px;max-width:500px;width:100%;}
+.himno-tit{font-family:'Baloo 2',cursive;font-size:1.45em;font-weight:800;color:var(--amarillo);margin-bottom:4px;text-align:center;}
+.himno-sub{color:var(--menta);font-size:.84em;margin-bottom:14px;text-align:center;}
+.estrofa{margin-bottom:13px;padding:10px 13px;background:rgba(46,204,64,.08);border-left:3px solid var(--verde);
+  border-radius:0 10px 10px 0;font-size:.87em;line-height:1.7;color:rgba(255,255,255,.88);}
+.estrofa strong{color:var(--verde);display:block;font-size:.77em;margin-bottom:3px;}
+
+/* ===== JUEGO ===== */
+#p-juego{display:none;flex-direction:column;align-items:center;width:100%;min-height:100vh;
+  background:linear-gradient(180deg,#87CEEB 0%,#c5eaa0 55%,#5c9e3a 100%);overflow:hidden;}
+.hud{width:100%;max-width:780px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;
+  padding:9px 14px;background:rgba(0,0,0,.28);backdrop-filter:blur(8px);z-index:20;position:sticky;top:0;}
+.hud-item{display:flex;align-items:center;gap:4px;font-family:'Baloo 2',cursive;font-weight:800;font-size:.98em;
+  color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5);}
+.hud-nivel{background:rgba(46,204,64,.3);border-radius:20px;padding:2px 11px;font-size:.8em;}
+.hud-timer{font-size:1.25em;color:var(--amarillo);}
+.hud-timer.urgente{color:var(--rojo);animation:blink .5s infinite alternate;}
+@keyframes blink{to{opacity:.35;}}
+
+/* Arena */
+#arena{width:100%;max-width:780px;position:relative;height:430px;overflow:hidden;flex-shrink:0;cursor:default;}
+.instruccion{position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border-radius:20px;padding:5px 16px;
+  font-size:.76em;font-weight:700;color:#fff;white-space:nowrap;z-index:15;pointer-events:none;transition:opacity .5s;}
+
+/* Nubes */
+.cloud{position:absolute;background:#fff;border-radius:40px;opacity:.8;pointer-events:none;}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%;}
+.c1{width:90px;height:26px;top:22px;left:-130px;animation:cmv 22s linear infinite;}
+.c1::before{width:44px;height:44px;top:-22px;left:10px;}
+.c1::after{width:32px;height:32px;top:-16px;left:42px;}
+.c2{width:58px;height:19px;top:65px;left:-90px;animation:cmv 30s linear infinite 9s;}
+.c2::before{width:30px;height:30px;top:-15px;left:8px;}
+@keyframes cmv{to{left:calc(100% + 150px);}}
+
+/* Henagito */
+#hj{position:absolute;bottom:98px;left:28px;width:66px;z-index:6;pointer-events:none;}
+
+/* Suelo */
+.suelo{position:absolute;bottom:0;width:100%;height:92px;
+  background:linear-gradient(180deg,#6dbf3e,#4a8c28 40%,#3a6e1e);border-top:4px solid #8fe060;z-index:3;}
+.suelo::before{content:'';position:absolute;top:-8px;left:0;right:0;height:14px;
+  background:repeating-linear-gradient(90deg,#8fe060 0,#8fe060 22px,#6dbf3e 22px,#6dbf3e 44px);border-radius:6px;}
+
+/* Contenedores */
+.bins{position:absolute;bottom:92px;right:0;display:flex;align-items:flex-end;gap:2px;z-index:5;}
+.bin{width:70px;display:flex;flex-direction:column;align-items:center;position:relative;}
+.bin-body{width:62px;height:72px;border-radius:6px 6px 12px 12px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-size:1.75em;box-shadow:0 4px 16px rgba(0,0,0,.3);border:3px solid rgba(255,255,255,.22);
+  transition:transform .15s,box-shadow .15s;}
+.bin-label{font-family:'Baloo 2',cursive;font-size:.6em;font-weight:800;color:#fff;margin-top:2px;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);text-transform:uppercase;letter-spacing:.4px;}
+.bin-hint{position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.75);border-radius:10px;padding:3px 9px;font-size:.63em;white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity .2s;z-index:30;}
+.bin:hover .bin-hint{opacity:1;}
+.bin.drop-over .bin-body{transform:scale(1.14);box-shadow:0 0 22px rgba(255,255,255,.7);}
+.bin.drop-ok .bin-body{animation:bok .35s ease;}
+.bin.drop-err .bin-body{animation:berr .35s ease;}
+@keyframes bok{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+@keyframes berr{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+.bin-papel .bin-body{background:linear-gradient(135deg,#2980b9,#1a5276);}
+.bin-plastico .bin-body{background:linear-gradient(135deg,#e67e22,#9c5a0e);}
+.bin-vidrio .bin-body{background:linear-gradient(135deg,#27ae60,#145a32);}
+.bin-metal .bin-body{background:linear-gradient(135deg,#7f8c8d,#2c3e50);}
+.bin-organico .bin-body{background:linear-gradient(135deg,#8B5E3C,#4a2c10);}
+
+/* Basura */
+.trash{position:absolute;font-size:2.4em;cursor:grab;z-index:10;touch-action:none;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));will-change:transform,top,left;}
+.trash.falling{animation:fall linear forwards;}
+@keyframes fall{0%{top:-55px;opacity:1;}100%{top:370px;opacity:.45;}}
+.trash.dragging{cursor:grabbing;z-index:100;filter:drop-shadow(0 8px 20px rgba(0,0,0,.65)) brightness(1.15);
+  animation:none!important;transform:scale(1.22);}
+.trash-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:.55em;
+  font-family:'Baloo 2',cursive;font-weight:800;color:#fff;background:rgba(0,0,0,.55);border-radius:8px;
+  padding:1px 7px;white-space:nowrap;pointer-events:none;}
+
+/* Flotantes */
+.float-pts{position:absolute;font-family:'Baloo 2',cursive;font-size:1.25em;font-weight:800;
+  pointer-events:none;z-index:55;animation:fup .9s ease-out forwards;}
+@keyframes fup{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-65px);}}
+.hint-bin{position:absolute;font-family:'Baloo 2',cursive;font-size:.7em;font-weight:800;
+  pointer-events:none;z-index:55;animation:fup 2s ease-out forwards;background:rgba(0,0,0,.7);
+  border-radius:10px;padding:3px 10px;white-space:nowrap;}
+
+/* Banner nivel */
+#nivel-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  background:linear-gradient(135deg,#FFD700,#ff8c00);border-radius:22px;padding:18px 40px;
+  font-family:'Baloo 2',cursive;font-size:1.9em;font-weight:800;color:#000;z-index:200;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);text-align:center;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+#nivel-banner.show{transform:translate(-50%,-50%) scale(1);}
+#vida-flash{position:fixed;inset:0;background:rgba(231,76,60,.35);pointer-events:none;z-index:300;opacity:0;transition:opacity .15s;}
+
+/* ===== PREGUNTAS ===== */
+#p-pregunta{display:none;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;background:radial-gradient(ellipse,#0d4a1e,#061209);padding:20px;}
+.q-card{background:rgba(255,255,255,.08);border:2px solid rgba(46,204,64,.35);border-radius:24px;
+  padding:25px;max-width:500px;width:100%;backdrop-filter:blur(10px);text-align:center;}
+.q-num{font-size:.8em;color:var(--menta);font-weight:700;margin-bottom:8px;}
+.q-txt{font-family:'Baloo 2',cursive;font-size:1.28em;font-weight:800;color:#fff;margin-bottom:18px;line-height:1.3;}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt{font-size:.9em;font-weight:700;padding:13px 10px;background:rgba(255,255,255,.1);color:#fff;
+  border:2px solid rgba(255,255,255,.2);border-radius:14px;cursor:pointer;transition:all .18s;line-height:1.3;}
+.opt:hover{background:rgba(46,204,64,.25);border-color:var(--verde);transform:scale(1.02);}
+.opt.ok{background:rgba(46,204,64,.4)!important;border-color:var(--verde)!important;}
+.opt.fail{background:rgba(231,76,60,.4)!important;border-color:var(--rojo)!important;}
+.q-fb{margin-top:12px;font-size:.95em;font-weight:800;min-height:26px;}
+.q-fb.ok{color:var(--verde);}.q-fb.fail{color:var(--rojo);}
+.btn-sig{display:none;margin-top:11px;font-family:'Baloo 2',cursive;font-size:1.02em;font-weight:800;
+  padding:10px 32px;background:linear-gradient(135deg,var(--verde),var(--verde-osc));color:#fff;
+  border:none;border-radius:30px;cursor:pointer;transition:all .2s;}
+.btn-sig:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(46,204,64,.4);}
+.barra-wrap{width:100%;max-width:500px;height:7px;background:rgba(255,255,255,.1);border-radius:10px;margin-bottom:14px;}
+.barra-fill{height:100%;background:linear-gradient(90deg,var(--verde),var(--amarillo));border-radius:10px;transition:width .4s;}
+
+/* ===== RESULTADO ===== */
+#p-resultado{display:none;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;background:radial-gradient(ellipse,#0d4a1e,#061209);padding:24px;text-align:center;}
+.trofeo{font-size:4.8em;animation:rebote 1s ease-in-out infinite alternate;}
+@keyframes rebote{to{transform:scale(1.14);}}
+.res-tit{font-family:'Baloo 2',cursive;font-size:1.95em;font-weight:800;margin:10px 0 5px;
+  background:linear-gradient(135deg,#FFD700,#2ecc40);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.res-pts{font-family:'Baloo 2',cursive;font-size:2.8em;font-weight:800;color:var(--amarillo);}
+.res-pts span{font-size:.44em;color:var(--menta);}
+.res-msg{font-size:.98em;color:var(--menta);max-width:420px;line-height:1.6;margin:9px 0;}
+.tierra-msg{background:rgba(255,255,255,.07);border:2px solid rgba(255,215,0,.33);border-radius:18px;
+  padding:13px 22px;max-width:420px;margin:11px 0;}
+.tierra-msg h3{font-family:'Baloo 2',cursive;color:var(--amarillo);margin-bottom:5px;}
+.tierra-msg p{font-size:.83em;color:rgba(255,255,255,.8);line-height:1.6;}
+.stats-row{display:flex;gap:18px;margin:8px 0;flex-wrap:wrap;justify-content:center;}
+.stat-box{background:rgba(255,255,255,.08);border-radius:12px;padding:10px 18px;min-width:90px;text-align:center;}
+.stat-box big{font-family:'Baloo 2',cursive;font-size:1.7em;font-weight:800;color:var(--amarillo);display:block;}
+.stat-box small{font-size:.72em;color:rgba(255,255,255,.55);}
+
+/* Confeti */
+.confeti-w{position:fixed;inset:0;pointer-events:none;z-index:999;}
+.cp{position:absolute;border-radius:2px;animation:cfall linear forwards;}
+@keyframes cfall{0%{opacity:1;transform:rotate(0) translateX(0);}100%{opacity:0;top:110vh;transform:rotate(720deg) translateX(var(--d));}}
+
+@media(max-width:500px){
+  .opts{grid-template-columns:1fr;}
+  .bin{width:58px;}.bin-body{width:52px;height:58px;font-size:1.5em;}
+  #arena{height:380px;}
+}
+</style>
+</head>
+<body>
+
+<!-- INICIO -->
+<div id="p-inicio">
+  <div class="stars" id="stars"></div>
+  <span class="planeta">🌍</span>
+  <div class="titulo">🌿 Henagito Reciclón 🌿</div>
+  <div class="sub">🌎 El Gran Juego del Día de la Tierra 🌎</div>
+  <div class="ficha">
+    <div class="ficha-nom">🏫 Institución Educativa Henao</div>
+    <div class="ficha-lema">✨ "Educando con amor por la vida y el planeta" ✨</div>
+    <div style="font-size:.76em;color:rgba(255,255,255,.45);margin-bottom:7px;">Quindío, Colombia · Día de la Tierra · 22 de Abril</div>
+    <div class="tags">
+      <span class="tag">♻️ Resp. Ambiental</span><span class="tag">🤝 Solidaridad</span>
+      <span class="tag">💚 Amor Naturaleza</span><span class="tag">🔬 Innovación</span>
+      <span class="tag">✊ Compromiso</span><span class="tag">🌱 Sostenibilidad</span>
+    </div>
+  </div>
+  <svg class="hena-idle" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+    <rect x="22" y="4" width="56" height="18" rx="8" fill="#2ecc40"/>
+    <text x="50" y="17" text-anchor="middle" font-size="10" fill="white" font-weight="bold">♻️</text>
+    <circle cx="50" cy="45" r="24" fill="#FFD580"/>
+    <ellipse cx="41" cy="40" rx="5" ry="6" fill="white"/><ellipse cx="59" cy="40" rx="5" ry="6" fill="white"/>
+    <circle cx="42" cy="41" r="3" fill="#1a3a6e"/><circle cx="60" cy="41" r="3" fill="#1a3a6e"/>
+    <circle cx="43" cy="39" r="1" fill="white"/><circle cx="61" cy="39" r="1" fill="white"/>
+    <path d="M 41 56 Q 50 64 59 56" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="35" cy="52" r="6" fill="rgba(255,100,80,.3)"/><circle cx="65" cy="52" r="6" fill="rgba(255,100,80,.3)"/>
+    <rect x="28" y="68" width="44" height="40" rx="12" fill="#27ae60"/>
+    <rect x="34" y="68" width="32" height="18" rx="7" fill="#2ecc40"/>
+    <text x="50" y="84" text-anchor="middle" font-size="13">♻️</text>
+    <rect x="8" y="70" width="22" height="11" rx="5" fill="#27ae60" transform="rotate(-15 19 75)"/>
+    <rect x="70" y="70" width="22" height="11" rx="5" fill="#27ae60" transform="rotate(15 81 75)"/>
+    <circle cx="12" cy="85" r="7" fill="#FFD580"/><text x="12" y="89" text-anchor="middle" font-size="8">🥫</text>
+    <circle cx="88" cy="85" r="7" fill="#FFD580"/><text x="88" y="89" text-anchor="middle" font-size="8">📦</text>
+    <rect x="36" y="106" width="13" height="14" rx="6" fill="#1a7a28"/>
+    <rect x="51" y="106" width="13" height="14" rx="6" fill="#1a7a28"/>
+    <ellipse cx="42" cy="119" rx="9" ry="4" fill="#6B3A1F"/>
+    <ellipse cx="57" cy="119" rx="9" ry="4" fill="#6B3A1F"/>
+  </svg>
+  <button class="btn" onclick="irHimno()">🎵 ¡Comenzar Aventura!</button>
+  <div class="autoria">
+    <strong>Autoría:</strong> Proyecto Ambiental Escolar — I.E. Henao · Quindío · 2025<br>
+    Materiales digitales reciclables usados: 📦 Cartón · 📰 Papel · 🥫 Lata · 🍾 Vidrio · 🧴 Plástico · 🌿 Orgánico
+  </div>
+</div>
+
+<!-- HIMNO -->
+<div id="p-himno">
+  <div class="himno-card">
+    <div class="himno-tit">🎶 Himno al Día de la Tierra</div>
+    <div class="himno-sub">I.E. Henao · Canta con Henagito Reciclón</div>
+    <div class="estrofa"><strong>🌿 Verso I</strong>La Tierra nos llama con voz de verdor,<br>Henagito avanza con fuerza y amor,<br>recoge el papel, el vidrio y cartón,<br>construyendo un mundo de renovación.</div>
+    <div class="estrofa"><strong>🌍 Coro</strong>¡Recicla, reutiliza, reduce también!<br>Con Henagito el planeta estará bien,<br>el Día de la Tierra llegó para brillar,<br>y juntos en Henao vamos a cuidar.</div>
+    <div class="estrofa"><strong>🌊 Verso II</strong>Ríos y montañas piden nuestra acción,<br>el aire y los bosques merecen atención,<br>somos los guardianes de esta generación,<br>educados con amor por la institución.</div>
+    <div class="estrofa"><strong>☀️ Final</strong>¡Por Quindío y Colombia, por toda la humanidad,<br>Henagito Reciclón es nuestra identidad!<br>Con valores y ciencia, con fe y voluntad,<br>¡cuidemos la Tierra con responsabilidad!</div>
+    <button class="btn" style="margin-top:14px;font-size:1.05em;" onclick="iniciarJuego()">¡Jugar Ahora! 🎮</button>
+  </div>
+</div>
+
+<!-- JUEGO -->
+<div id="p-juego">
+  <div class="hud">
+    <div class="hud-item">⭐ <span id="h-pts">0</span></div>
+    <div class="hud-item hud-nivel">Nivel <span id="h-nivel">1</span> / 5</div>
+    <div class="hud-item hud-timer" id="h-timer">⏱ 60s</div>
+    <div class="hud-item">❤️ <span id="h-vidas">3</span></div>
+    <div class="hud-item" style="font-size:.8em;color:var(--menta);">✅ <span id="h-ok">0</span> | ❌ <span id="h-err">0</span></div>
+  </div>
+  <div id="arena">
+    <div class="cloud c1"></div><div class="cloud c2"></div>
+    <div class="instruccion" id="instruccion">🖱️ ¡Arrastra cada residuo al contenedor correcto con el mouse!</div>
+    <!-- Henagito -->
+    <div id="hj">
+      <svg viewBox="0 0 68 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="2" width="40" height="14" rx="6" fill="#2ecc40"/>
+        <text x="34" y="13" text-anchor="middle" font-size="8" fill="white">♻️</text>
+        <circle cx="34" cy="32" r="18" fill="#FFD580"/>
+        <ellipse cx="27" cy="28" rx="4" ry="5" fill="white"/><ellipse cx="41" cy="28" rx="4" ry="5" fill="white"/>
+        <circle cx="28" cy="29" r="2.5" fill="#1a3a6e"/><circle cx="42" cy="29" r="2.5" fill="#1a3a6e"/>
+        <circle cx="29" cy="27" r="1" fill="white"/><circle cx="43" cy="27" r="1" fill="white"/>
+        <path d="M 27 42 Q 34 49 41 42" stroke="#c0392b" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <rect x="18" y="50" width="32" height="26" rx="8" fill="#27ae60"/>
+        <text x="34" y="66" text-anchor="middle" font-size="10">♻️</text>
+        <rect x="4" y="51" width="16" height="9" rx="4" fill="#27ae60" transform="rotate(-15 12 55)"/>
+        <rect x="48" y="51" width="16" height="9" rx="4" fill="#27ae60" transform="rotate(15 56 55)"/>
+        <rect x="20" y="74" width="11" height="6" rx="3" fill="#1a7a28"/>
+        <rect x="37" y="74" width="11" height="6" rx="3" fill="#1a7a28"/>
+      </svg>
+    </div>
+    <!-- Contenedores -->
+    <div class="bins" id="bins">
+      <div class="bin bin-papel" data-tipo="papel">
+        <div class="bin-hint">📦 Papel y cartón</div>
+        <div class="bin-body">🗑️</div>
+        <span class="bin-label" style="color:#5dade2;">Papel</span>
+      </div>
+      <div class="bin bin-plastico" data-tipo="plastico">
+        <div class="bin-hint">🧴 Plástico</div>
+        <div class="bin-body">🗑️</div>
+        <span class="bin-label" style="color:#f0a500;">Plástico</span>
+      </div>
+      <div class="bin bin-vidrio" data-tipo="vidrio">
+        <div class="bin-hint">🍾 Vidrio</div>
+        <div class="bin-body">🗑️</div>
+        <span class="bin-label" style="color:#52d68a;">Vidrio</span>
+      </div>
+      <div class="bin bin-metal" data-tipo="metal">
+        <div class="bin-hint">🥫 Metal/Latas</div>
+        <div class="bin-body">🗑️</div>
+        <span class="bin-label" style="color:#bdc3c7;">Metal</span>
+      </div>
+      <div class="bin bin-organico" data-tipo="organico">
+        <div class="bin-hint">🌿 Orgánico</div>
+        <div class="bin-body">🗑️</div>
+        <span class="bin-label" style="color:#cd9567;">Org.</span>
+      </div>
+    </div>
+    <div class="suelo"></div>
+  </div>
+  <div style="text-align:center;padding:5px 10px;font-size:.76em;color:rgba(0,40,10,.8);font-weight:700;max-width:780px;width:100%;">
+    ♻️ Arrastra con el mouse (o toca en móvil) cada residuo al contenedor correcto · 5 Niveles · ¡Si cae pierdes una vida!
+  </div>
+</div>
+
+<!-- PREGUNTAS -->
+<div id="p-pregunta">
+  <div style="text-align:center;margin-bottom:10px;">
+    <div style="font-size:2em">🌍</div>
+    <div style="font-family:'Baloo 2',cursive;font-size:1.35em;font-weight:800;color:var(--verde);">Quiz Ambiental</div>
+    <div style="font-size:.8em;color:rgba(255,255,255,.4);">con Henagito Reciclón</div>
+  </div>
+  <div class="barra-wrap"><div class="barra-fill" id="q-barra" style="width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-num" id="q-num">Pregunta 1 de 12</div>
+    <div class="q-txt" id="q-txt"></div>
+    <div class="opts" id="q-opts"></div>
+    <div class="q-fb" id="q-fb"></div>
+    <button class="btn-sig" id="btn-sig" onclick="siguientePregunta()">Siguiente ➡️</button>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div id="p-resultado">
+  <div class="trofeo" id="res-trofeo">🏆</div>
+  <div class="res-tit" id="res-tit">¡Felicidades!</div>
+  <div class="res-pts"><span id="res-pts">0</span><span> puntos</span></div>
+  <div class="stats-row">
+    <div class="stat-box"><big id="s-ok">0</big><small>Aciertos</small></div>
+    <div class="stat-box"><big id="s-err">0</big><small>Errores</small></div>
+    <div class="stat-box"><big id="s-niv">1</big><small>Nivel máx.</small></div>
+  </div>
+  <div class="res-msg" id="res-msg"></div>
+  <div class="tierra-msg">
+    <h3>🌍 Mensaje del Día de la Tierra</h3>
+    <p>El <strong>22 de abril</strong> celebramos el Día de la Tierra. <strong>Reciclar, Reutilizar y Reducir</strong> son las tres acciones más poderosas. ¡Sé como Henagito Reciclón y cuida tu entorno cada día! 🌿♻️💚</p>
+  </div>
+  <div style="font-size:.7em;color:rgba(255,255,255,.3);margin:7px 0 4px;text-align:center;">
+    🏫 I.E. Henao · Quindío · Proyecto Ambiental · 2025<br>
+    <em>Materiales digitales reciclables: 📦📰🥫🍾🧴🌿</em>
+  </div>
+  <button class="btn" style="margin-top:10px;" onclick="reiniciar()">🔄 Jugar de Nuevo</button>
+</div>
+
+<div id="nivel-banner">⬆️ ¡NIVEL <span id="nb-n">2</span>!<br><span style="font-size:.5em">¡Más velocidad, más puntos!</span></div>
+<div id="vida-flash"></div>
+<div class="confeti-w" id="confeti"></div>
+
+<script>
+// ================== DATOS ==================
+const BASURAS=[
+  {e:'📦',t:'papel',n:'Caja cartón'},{e:'📰',t:'papel',n:'Periódico'},{e:'📋',t:'papel',n:'Hoja papel'},
+  {e:'🗞️',t:'papel',n:'Revista'},{e:'📄',t:'papel',n:'Papel impreso'},{e:'📃',t:'papel',n:'Papel carta'},
+  {e:'🧴',t:'plastico',n:'Envase plástico'},{e:'🥤',t:'plastico',n:'Vaso plástico'},
+  {e:'🛍️',t:'plastico',n:'Bolsa plástica'},{e:'🍶',t:'plastico',n:'Botella plástica'},
+  {e:'🍾',t:'vidrio',n:'Botella vidrio'},{e:'🫙',t:'vidrio',n:'Frasco vidrio'},{e:'🥃',t:'vidrio',n:'Vaso vidrio'},
+  {e:'🥫',t:'metal',n:'Lata conserva'},{e:'🪣',t:'metal',n:'Cubeta metal'},{e:'🔩',t:'metal',n:'Pieza metal'},
+  {e:'🍎',t:'organico',n:'Manzana'},{e:'🍌',t:'organico',n:'Cáscara banano'},{e:'🥬',t:'organico',n:'Verdura'},
+  {e:'🌿',t:'organico',n:'Plantas'},{e:'🥚',t:'organico',n:'Cáscara huevo'},{e:'🍂',t:'organico',n:'Hojas secas'},
+];
+
+const PREGUNTAS=[
+  {t:"¿Cuándo se celebra el Día de la Tierra?",o:["15 de marzo","22 de abril","5 de junio","1 de mayo"],c:1,e:"🌍",x:"El 22 de abril se celebra el Día de la Tierra desde 1970."},
+  {t:"¿A qué contenedor va el papel y cartón?",o:["Verde","Amarillo","Azul","Gris"],c:2,e:"📦",x:"El papel y cartón van al contenedor AZUL."},
+  {t:"¿Cuánto tarda en degradarse una botella de plástico?",o:["10 años","50 años","500 años","1 año"],c:2,e:"🍶",x:"Una botella plástica puede tardar hasta 500 años en degradarse."},
+  {t:"¿Qué significan las 3 R del reciclaje?",o:["Reciclar, Reutilizar, Reducir","Recolectar, Romper, Reciclar","Restar, Reparar, Renovar","Reciclar, Restar, Reducir"],c:0,e:"♻️",x:"Las 3 R son Reducir, Reutilizar y Reciclar. ¡En ese orden de importancia!"},
+  {t:"¿Qué porcentaje del agua de la Tierra es apta para beber?",o:["50%","25%","10%","Menos del 3%"],c:3,e:"💧",x:"Menos del 3% del agua es dulce y apta para consumo humano."},
+  {t:"¿Cuál es la principal causa del calentamiento global?",o:["La lluvia ácida","Los gases de efecto invernadero","El viento solar","Las mareas"],c:1,e:"🌡️",x:"Los gases de efecto invernadero como el CO₂ atrapan el calor del planeta."},
+  {t:"¿Cuál de estos residuos va en el contenedor verde (vidrio)?",o:["Lata de refresco","Botella de vidrio","Periódico","Bolsa plástica"],c:1,e:"🍾",x:"Las botellas y frascos de vidrio van en el contenedor VERDE."},
+  {t:"¿Qué hace Henagito Reciclón?",o:["Contamina ríos","Recoge y recicla residuos","Quema basura","Compra plástico"],c:1,e:"🦸",x:"¡Henagito Reciclón recoge residuos y los clasifica en el contenedor correcto!"},
+  {t:"¿Cuántos océanos tiene la Tierra?",o:["3","4","5","6"],c:2,e:"🌊",x:"La Tierra tiene 5 océanos: Pacífico, Atlántico, Índico, Antártico y Ártico."},
+  {t:"¿Cuál residuo NO va en el contenedor de papel?",o:["Cartón limpio","Periódico","Caja pizza con grasa","Hoja de papel"],c:2,e:"📋",x:"La caja de pizza con grasa no puede reciclarse porque contamina el papel."},
+  {t:"¿Qué acto ayuda más al planeta en el día a día?",o:["Comprar más plástico","Dejar el grifo abierto","Usar bolsas reutilizables","Imprimir todo el tiempo"],c:2,e:"🌿",x:"Usar bolsas reutilizables reduce la cantidad de plástico de un solo uso."},
+  {t:"¿Dónde van los restos de comida y cáscaras?",o:["Contenedor azul","Contenedor naranja","Contenedor verde","Contenedor orgánico marrón"],c:3,e:"🍎",x:"Los residuos orgánicos van en el contenedor marrón para hacer compost."},
+];
+
+// ================== ESTADO ==================
+let puntos=0, vidas=3, nivel=1, tiempoRestante=60;
+let preguntaActual=0, juegoActivo=false;
+let aciertos=0, errores=0, aciertosJuego=0, erroresJuego=0;
+let timerID=null, spawnID=null;
+let objetos=[];          // {el, tipo, nombre, viva, fallID}
+let dragObj=null;        // objeto siendo arrastrado
+let dragOffX=0, dragOffY=0;
+
+const NIVELES=[
+  {vel:4.8,intervalo:2000,max:4,tiempo:60},
+  {vel:4.0,intervalo:1700,max:5,tiempo:70},
+  {vel:3.3,intervalo:1400,max:6,tiempo:75},
+  {vel:2.8,intervalo:1150,max:7,tiempo:80},
+  {vel:2.3,intervalo:950, max:8,tiempo:85},
+];
+const cfg=()=>NIVELES[Math.min(nivel-1,NIVELES.length-1)];
+const NOMBRES_BIN={papel:'📦 Azul (Papel)',plastico:'🧴 Naranja (Plástico)',vidrio:'🍾 Verde (Vidrio)',metal:'🥫 Gris (Metal)',organico:'🌿 Marrón (Orgánico)'};
+
+// ================== ESTRELLAS ==================
+function crearEstrellas(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<55;i++){
+    const s=document.createElement('div'); s.className='star';
+    const sz=Math.random()*3+1;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s`;
+    c.appendChild(s);
+  }
+}
+
+// ================== PANTALLAS ==================
+function mostrar(id){
+  ['p-inicio','p-himno','p-juego','p-pregunta','p-resultado'].forEach(p=>{
+    const el=document.getElementById(p); el.style.display='none'; el.style.flexDirection='';
+  });
+  const t=document.getElementById(id); t.style.display='flex'; t.style.flexDirection='column';
+}
+function irHimno(){mostrar('p-himno');}
+
+// ================== INICIO JUEGO ==================
+function iniciarJuego(){
+  puntos=0; vidas=3; nivel=1; aciertos=0; errores=0; aciertosJuego=0; erroresJuego=0;
+  preguntaActual=0; objetos=[]; dragObj=null;
+  actualizarHUD();
+  mostrar('p-juego');
+  juegoActivo=true;
+  iniciarTimer();
+  setTimeout(()=>programarSpawn(),800);
+  setTimeout(()=>{const ins=document.getElementById('instruccion');if(ins)ins.style.opacity='0';},5000);
+}
+
+// ================== TIMER ==================
+function iniciarTimer(){
+  clearInterval(timerID);
+  tiempoRestante=cfg().tiempo;
+  timerID=setInterval(()=>{
+    if(!juegoActivo)return;
+    tiempoRestante--;
+    const el=document.getElementById('h-timer');
+    el.textContent=`⏱ ${tiempoRestante}s`;
+    if(tiempoRestante<=10)el.classList.add('urgente'); else el.classList.remove('urgente');
+    if(tiempoRestante<=0){clearInterval(timerID); avanzarNivel();}
+  },1000);
+}
+
+function avanzarNivel(){
+  clearTimeout(spawnID);
+  limpiarObjetos();
+  if(nivel>=5){juegoActivo=false; setTimeout(irPreguntas,600); return;}
+  nivel++;
+  actualizarHUD();
+  const nb=document.getElementById('nivel-banner');
+  document.getElementById('nb-n').textContent=nivel;
+  nb.classList.add('show');
+  setTimeout(()=>{nb.classList.remove('show'); iniciarTimer(); setTimeout(()=>programarSpawn(),400);},1800);
+}
+
+function limpiarObjetos(){
+  objetos.forEach(o=>{clearTimeout(o.fallID); try{o.el.parentNode.removeChild(o.el);}catch(e){}});
+  objetos=[];
+}
+
+// ================== SPAWN ==================
+function programarSpawn(){
+  if(!juegoActivo)return;
+  const activos=objetos.filter(o=>o.viva).length;
+  if(activos<cfg().max) spawnBasura();
+  spawnID=setTimeout(programarSpawn, cfg().intervalo + Math.random()*350);
+}
+
+function spawnBasura(){
+  const arena=document.getElementById('arena');
+  const aW=arena.offsetWidth;
+  const data=BASURAS[Math.floor(Math.random()*BASURAS.length)];
+
+  const el=document.createElement('div');
+  el.className='trash falling';
+  el.textContent=data.e;
+  el.dataset.tipo=data.t;
+
+  // Mostrar nombre bajo el emoji
+  const lbl=document.createElement('span');
+  lbl.className='trash-label'; lbl.textContent=data.n;
+  el.appendChild(lbl);
+
+  const maxX=Math.max(50, aW - 380);
+  const x=30+Math.random()*maxX;
+  el.style.left=x+'px';
+  el.style.top='-55px';
+  const vel=cfg().vel;
+  el.style.animationDuration=vel+'s';
+
+  const fallID=setTimeout(()=>{
+    const obj=objetos.find(o=>o.el===el);
+    if(obj&&obj.viva&&juegoActivo){
+      obj.viva=false;
+      try{el.parentNode.removeChild(el);}catch(e){}
+      objetos=objetos.filter(o=>o.el!==el);
+      perderVida();
+    }
+  }, vel*1000 - 50);
+
+  el.addEventListener('mousedown',e=>iniciarDrag(e,el));
+  el.addEventListener('touchstart',e=>iniciarTouchDrag(e,el),{passive:false});
+  arena.appendChild(el);
+  objetos.push({el,tipo:data.t,nombre:data.n,viva:true,fallID});
+}
+
+// ================== DRAG MOUSE ==================
+function iniciarDrag(e,el){
+  e.preventDefault();
+  if(!juegoActivo)return;
+  const obj=objetos.find(o=>o.el===el);
+  if(!obj||!obj.viva)return;
+  clearTimeout(obj.fallID); obj.viva=false;
+  dragObj=obj;
+  const rect=el.getBoundingClientRect();
+  dragOffX=e.clientX-rect.left;
+  dragOffY=e.clientY-rect.top;
+  el.classList.remove('falling'); el.classList.add('dragging');
+  document.addEventListener('mousemove',onMouseMove);
+  document.addEventListener('mouseup',onMouseUp);
+}
+
+function onMouseMove(e){
+  if(!dragObj)return;
+  posicionarDrag(e.clientX,e.clientY);
+  resaltarBin(e.clientX,e.clientY);
+}
+function onMouseUp(e){
+  if(!dragObj)return;
+  soltarDrag(e.clientX,e.clientY);
+  document.removeEventListener('mousemove',onMouseMove);
+  document.removeEventListener('mouseup',onMouseUp);
+}
+
+// ================== DRAG TOUCH ==================
+function iniciarTouchDrag(e,el){
+  e.preventDefault();
+  if(!juegoActivo)return;
+  const obj=objetos.find(o=>o.el===el);
+  if(!obj||!obj.viva)return;
+  clearTimeout(obj.fallID); obj.viva=false;
+  dragObj=obj;
+  const t=e.touches[0];
+  const rect=el.getBoundingClientRect();
+  dragOffX=t.clientX-rect.left;
+  dragOffY=t.clientY-rect.top;
+  el.classList.remove('falling'); el.classList.add('dragging');
+  document.addEventListener('touchmove',onTouchMove,{passive:false});
+  document.addEventListener('touchend',onTouchEnd);
+}
+function onTouchMove(e){
+  e.preventDefault();
+  if(!dragObj)return;
+  const t=e.touches[0];
+  posicionarDrag(t.clientX,t.clientY);
+  resaltarBin(t.clientX,t.clientY);
+}
+function onTouchEnd(e){
+  if(!dragObj)return;
+  const t=e.changedTouches[0];
+  soltarDrag(t.clientX,t.clientY);
+  document.removeEventListener('touchmove',onTouchMove);
+  document.removeEventListener('touchend',onTouchEnd);
+}
+
+// ================== HELPERS DRAG ==================
+function posicionarDrag(cx,cy){
+  if(!dragObj)return;
+  const arena=document.getElementById('arena');
+  const r=arena.getBoundingClientRect();
+  dragObj.el.style.left=(cx-r.left-dragOffX)+'px';
+  dragObj.el.style.top=(cy-r.top-dragOffY)+'px';
+}
+
+function resaltarBin(cx,cy){
+  document.querySelectorAll('.bin').forEach(b=>b.classList.remove('drop-over'));
+  const b=getBinEn(cx,cy);
+  if(b)b.classList.add('drop-over');
+}
+
+function soltarDrag(cx,cy){
+  if(!dragObj)return;
+  document.querySelectorAll('.bin').forEach(b=>b.classList.remove('drop-over'));
+  const binEl=getBinEn(cx,cy);
+  const obj=dragObj; dragObj=null;
+
+  if(binEl){
+    const tipoReq=binEl.dataset.tipo;
+    const pts=(tipoReq===obj.tipo)?10*nivel:0;
+    if(tipoReq===obj.tipo){
+      // CORRECTO ✅
+      puntos+=pts; aciertos++; aciertosJuego++;
+      actualizarHUD();
+      flotante('+'+pts+' ✅',obj.el,'#2ecc40');
+      binEl.classList.add('drop-ok'); setTimeout(()=>binEl.classList.remove('drop-ok'),450);
+      miniConfeti(cx,cy);
+    } else {
+      // INCORRECTO ❌
+      puntos=Math.max(0,puntos-5); errores++; erroresJuego++;
+      actualizarHUD();
+      flotante('-5 ❌',obj.el,'#e74c3c');
+      binEl.classList.add('drop-err'); setTimeout(()=>binEl.classList.remove('drop-err'),450);
+      hintBin(obj.tipo,obj.el);
+    }
+  } else {
+    // Soltó en zona libre = leve penalización
+    puntos=Math.max(0,puntos-2); erroresJuego++;
+    actualizarHUD();
+    flotante('-2',obj.el,'#f39c12');
+  }
+
+  // Quitar elemento
+  try{obj.el.parentNode.removeChild(obj.el);}catch(e){}
+  objetos=objetos.filter(o=>o!==obj);
+}
+
+function getBinEn(cx,cy){
+  for(const b of document.querySelectorAll('.bin')){
+    const r=b.getBoundingClientRect();
+    if(cx>=r.left-12&&cx<=r.right+12&&cy>=r.top-35&&cy<=r.bottom+10)return b;
+  }
+  return null;
+}
+
+function flotante(txt,refEl,color){
+  const arena=document.getElementById('arena');
+  const f=document.createElement('div'); f.className='float-pts';
+  f.textContent=txt; f.style.color=color;
+  f.style.left=refEl.style.left||'50%'; f.style.top=refEl.style.top||'100px';
+  arena.appendChild(f); setTimeout(()=>f.remove(),1000);
+}
+
+function hintBin(tipo,refEl){
+  const arena=document.getElementById('arena');
+  const h=document.createElement('div'); h.className='hint-bin';
+  h.textContent='Va en: '+NOMBRES_BIN[tipo];
+  h.style.left=refEl.style.left||'50%'; h.style.top=refEl.style.top||'80px';
+  arena.appendChild(h); setTimeout(()=>h.remove(),2000);
+}
+
+function miniConfeti(cx,cy){
+  const arena=document.getElementById('arena');
+  const ar=arena.getBoundingClientRect();
+  const cols=['#2ecc40','#FFD700','#3498db'];
+  for(let i=0;i<9;i++){
+    const p=document.createElement('div');
+    const dx=(Math.random()-.5)*70; const dy=-(20+Math.random()*50);
+    p.style.cssText=`position:absolute;left:${cx-ar.left}px;top:${cy-ar.top}px;width:9px;height:9px;
+      background:${cols[i%3]};border-radius:50%;pointer-events:none;z-index:55;
+      animation:fup .7s ease-out forwards;transform:translate(${dx}px,${dy}px);`;
+    arena.appendChild(p); setTimeout(()=>p.remove(),800);
+  }
+}
+
+function perderVida(){
+  vidas--; actualizarHUD();
+  const fl=document.getElementById('vida-flash');
+  fl.style.opacity='1'; setTimeout(()=>fl.style.opacity='0',280);
+  if(vidas<=0){
+    juegoActivo=false; clearInterval(timerID); clearTimeout(spawnID); limpiarObjetos();
+    setTimeout(irPreguntas,500);
+  }
+}
+
+function actualizarHUD(){
+  document.getElementById('h-pts').textContent=puntos;
+  document.getElementById('h-nivel').textContent=nivel;
+  document.getElementById('h-vidas').textContent='❤️'.repeat(Math.max(0,vidas));
+  document.getElementById('h-ok').textContent=aciertosJuego;
+  document.getElementById('h-err').textContent=erroresJuego;
+}
+
+// ================== PREGUNTAS ==================
+function irPreguntas(){juegoActivo=false;preguntaActual=0;mostrar('p-pregunta');mostrarPregunta();}
+
+function mostrarPregunta(){
+  const p=PREGUNTAS[preguntaActual],total=PREGUNTAS.length;
+  document.getElementById('q-num').textContent=`Pregunta ${preguntaActual+1} de ${total}`;
+  document.getElementById('q-txt').innerHTML=p.e+' '+p.t;
+  document.getElementById('q-fb').textContent='';
+  document.getElementById('q-fb').className='q-fb';
+  document.getElementById('btn-sig').style.display='none';
+  document.getElementById('q-barra').style.width=((preguntaActual/total)*100)+'%';
+  const grid=document.getElementById('q-opts'); grid.innerHTML='';
+  p.o.forEach((op,i)=>{
+    const btn=document.createElement('button'); btn.className='opt'; btn.textContent=op;
+    btn.onclick=()=>responder(i,btn); grid.appendChild(btn);
+  });
+}
+
+function responder(idx,btn){
+  const p=PREGUNTAS[preguntaActual];
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=null);
+  const fb=document.getElementById('q-fb');
+  if(idx===p.c){btn.classList.add('ok');puntos+=20;aciertos++;fb.textContent='✅ '+p.x;fb.className='q-fb ok';}
+  else{btn.classList.add('fail');document.querySelectorAll('.opt')[p.c].classList.add('ok');
+    puntos=Math.max(0,puntos-5);fb.textContent='❌ Correcto: '+p.o[p.c];fb.className='q-fb fail';}
+  document.getElementById('btn-sig').style.display='inline-block';
+}
+
+function siguientePregunta(){
+  preguntaActual++;
+  if(preguntaActual>=PREGUNTAS.length) mostrarResultado(); else mostrarPregunta();
+}
+
+// ================== RESULTADO ==================
+function mostrarResultado(){
+  document.getElementById('q-barra').style.width='100%';
+  mostrar('p-resultado');
+  document.getElementById('res-pts').textContent=puntos;
+  document.getElementById('s-ok').textContent=aciertos;
+  document.getElementById('s-err').textContent=errores;
+  document.getElementById('s-niv').textContent=nivel;
+
+  let tit,msg,emoji;
+  if(puntos>=500){emoji='🏆🌟';tit='¡Guardián Supremo de la Tierra!';msg='¡Eres un héroe ambiental! Completaste los 5 niveles y el quiz brillantemente. ¡El planeta te lo agradece!';}
+  else if(puntos>=300){emoji='🥇🌍';tit='¡Excelente Reciclador!';msg='¡Muy bien! Henagito Reciclón está muy orgulloso de ti. Sigue aprendiendo y cuidando el medio ambiente.';}
+  else if(puntos>=150){emoji='🥈🌿';tit='¡Buen Aprendiz Ambiental!';msg='Vas por buen camino. Practica más reciclaje y sigue aprendiendo sobre el Día de la Tierra.';}
+  else{emoji='🌱💪';tit='¡Sigue Intentándolo!';msg='El planeta te necesita. Aprende más sobre reciclaje. ¡Henagito confía en que puedes mejorar!';}
+
+  document.getElementById('res-trofeo').textContent=emoji;
+  document.getElementById('res-tit').textContent=tit;
+  document.getElementById('res-msg').textContent=msg;
+  if(puntos>=300) confettiGrande();
+}
+
+function confettiGrande(){
+  const cont=document.getElementById('confeti');
+  const cols=['#2ecc40','#FFD700','#3498db','#e74c3c','#f39c12','#9b59b6'];
+  for(let i=0;i<110;i++){
+    const p=document.createElement('div'); p.className='cp';
+    const d=(Math.random()-.5)*260;
+    p.style.cssText=`left:${Math.random()*100}%;top:-20px;background:${cols[~~(Math.random()*cols.length)]};
+      width:${6+Math.random()*9}px;height:${6+Math.random()*9}px;
+      animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*1.5}s;--d:${d}px;`;
+    cont.appendChild(p);
+  }
+  setTimeout(()=>cont.innerHTML='',6000);
+}
+
+function reiniciar(){
+  dragObj=null; juegoActivo=false;
+  clearInterval(timerID); clearTimeout(spawnID);
+  document.removeEventListener('mousemove',onMouseMove);
+  document.removeEventListener('mouseup',onMouseUp);
+  mostrar('p-inicio');
+}
+
+// ================== INIT ==================
+crearEstrellas();
+</script>
+</body>
+</html>
